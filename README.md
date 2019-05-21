@@ -41,17 +41,35 @@ java -jar GenomeAnalysisTK.jar -T VariantFiltration -R ~/Bgh_genome/bgh_dh14_v4.
 
 #filter INDELs (GATK)
 
-
+java -jar GenomeAnalysisTK.jar -T VariantFiltration -R ~/Bgh_genome/bgh_dh14_v4.fa -V ~/BWA-UV2-DH14_PicardSort.dedup_GATKNORMAL_raw_INDEL.vcf --filterExpression 'QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0' --filterName "basic_indel_filter" -o ~/BWA-UV2-DH14_PicardSort.dedup_GATKNORMAL_filtered_INDEL.vcf
 
 #call raw variants (Freebayes)
 
+~/freebayes -f ~/Bgh_genome/bgh_dh14_v4.fa -p 1 ~/BWA-UV2-DH14_PicardSort.dedup.bam -u > ~/BWA UV2_DH14_PicardSort.dedup._raw_variant_freebayes.vcf
+
 #filter variants (Freebayes)
+
+~/vcffilter -f "QUAL > 20 & QUAL / AO > 10 & SAF > 1 & SAR > 1 & RPR > 1 & RPL > 1" ~/BWA UV2_DH14_PicardSort.dedup._raw_variant_freebayes.vcf > ~/BWA UV2_DH14_PicardSort.dedup_vcffiltered.freebayes.vcf
 
 #call raw variants (Mpileup)
 
+~/samtools mpileup -g -f ~/Bgh_genome/bgh_dh14_v4.fa ~/BWA-UV2-DH14_PicardSort.dedup.bam > ~/mpileup_UV2_raw.bcf
+~/bcftools call -c -v --output-type b --ploidy 1 ~/mpileup_UV2_raw.bcf > ~/mpileup_UV2_var.bcf
+~/bcftools view ~/mpileup_UV2_var.bcf > ~/mpileup_final_UV2.vcf
+
 #filter variants (Mpileup)
 
-#Unique and common variants
+java -jar ~/SnpSift.jar filter "( QUAL >= 20 && DP > 3 && MQ > 50 )" ~/mpileup_final_UV2.vcf > /~/mpileup_final_UV2.vcf_SNPsift.vcf
+
+#Unique and common variants (bcftools)
+#I could also reduce the false ''unique'' positive by switching filtering and finding the unique variants steps, especially in freebayes and mpileup where the filtered variants are deleted from the vcf file; if i filter the variants before finding the unique variants, i will have more false positive (filtered in K1 and not in UV).
+
+~/bcftools isec -p ~/isec_common_Unique_K1UV2 ~/K1.vcf.gz ~/UV.vcf.gz
+
+#Predict the effect
+
+java -jar ~/snpEff.jar eff DH14 /work/mb297167/UV_BWA/BWA-UV2-DH14_PicardSort.dedup.vcf > /work/mb297167/UV_BWA/BWA-UV2-DH14_PicardSort.dedup.annotated.vcf
+
 
 
 
