@@ -23,7 +23,25 @@ java -jar /home/mb297167/tools/Picard/picard/build/libs/picardcloud.jar MarkDupl
 
 java -jar ~/picardcloud.jar BuildBamIndex I=~/BWA-K1/UV2/UV8-DH14_PicardSort_dedup.bam
 
-#call raw variants (GATK)
+#Create Realignment Targets (GATK)
+#This is the first step in a two-step process of realigning around indels
+
+java -jar ~/GenomeAnalysisTK.jar -T RealignerTargetCreator -R ~/Bgh_genome/bgh_dh14_v4.fa -I ~/K1DH14mapped-n-sort.markdup-RG.bam -o ~/K1DH14mapped-n-sort-markdup-RG-realignment_targets.list
+
+#Realign Indels (GATK)
+#This step performs the realignment around the indels which were identified in the previous step (the ‘realignment targets’)
+
+java -jar ~/GenomeAnalysisTK.jar -T IndelRealigner -R ref -I ~/dedup_reads.bam -targetIntervals ~/realignment_targets.list -o ~/realigned_reads.bam
+
+#Base Quality Score Recalibration BQSR (GATK)
+
+java -jar ~/GenomeAnalysisTK.jar -T BaseRecalibrator -R ~/Bgh_genome/bgh_dh14_v4.fa -I ~/realigned_reads.bam -knownSites ~/filtered_snps.vcf -knownSites ~/filtered_indels.vcf -o ~/recal_data.table
+
+#Apply BQSR (GATK)
+
+java -jar ~/GenomeAnalysisTK.jar -T PrintReads -R ~/Bgh_genome/bgh_dh14_v4.fa -I ~/realigned_reads.bam -BQSR recal_data.table -o recal_reads.bam
+
+#call raw variants from dedup.bam, realigned.bam or recal_data.bam (GATK)
 
 java -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -ploidy 1 -R ~/Bgh_genome/bgh_dh14_v4.fa -I ~/BWA-K1/UV2/UV8-DH14_PicardSort_dedup.bam -o ~/BWA-K1/UV2/UV8-DH14_PicardSort_dedup_raw_variants_GATK.vcf
 
@@ -61,6 +79,9 @@ java -jar GenomeAnalysisTK.jar -T VariantFiltration -R ~/Bgh_genome/bgh_dh14_v4.
 
 java -jar ~/SnpSift.jar filter "( QUAL >= 20 && DP > 3 && MQ > 50 )" ~/mpileup_final_UV2.vcf > /~/mpileup_final_UV2.vcf_SNPsift.vcf
 
+#remove INDELs (Freebayes and mpileup)
+~/vcftools --vcf ~/BWA UV2_DH14_PicardSort.dedup_vcffiltered.freebayes.vcf --remove-indels --recode --recode-INFO-all --out ~/BWA UV2_DH14_PicardSort.dedup_vcffiltered.freebayes.snpsonly.vcf
+
 #Unique and common variants (bcftools)
 #I could also reduce the false ''unique'' positive by switching filtering and finding the unique variants steps, especially in freebayes and mpileup where the filtered variants are deleted from the vcf file; if i filter the variants before finding the unique variants, i will have more false positive (filtered in K1 and not in UV).
 
@@ -69,9 +90,5 @@ java -jar ~/SnpSift.jar filter "( QUAL >= 20 && DP > 3 && MQ > 50 )" ~/mpileup_f
 #Predict the effect
 
 java -jar ~/snpEff.jar eff DH14 /work/mb297167/UV_BWA/BWA-UV2-DH14_PicardSort.dedup.vcf > /work/mb297167/UV_BWA/BWA-UV2-DH14_PicardSort.dedup.annotated.vcf
-
-
-
-
 
 
