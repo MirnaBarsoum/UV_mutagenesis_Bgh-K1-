@@ -9,9 +9,9 @@ java -jar ~/trimmomatic-0.38.jar PE -threads 8 -trimlog ~/log-file ~/F.fastq.gz 
 ~/bwa-0.7.17/bwa mem -t 12 -M -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1' ~/Bgh_genome/bgh_dh14_v4.fa ~/F_paired.fq ~/B_paired.fq > ~/BWA-K1/UV2/UV8-DH14.sam
 
 #sam to bam
-
+´´´
 ~/samtools-1.9/samtools view -b -S ~/BWA-K1/UV2/UV8-DH14.sam > ~/BWA-K1/UV2/UV8-DH14.bam
-
+´´´
 #sort bam
 
 java -jar /picardcloud.jar AddOrReplaceReadGroups I=/BWA-K1/UV2/UV8-DH14.bam O=~/BWA-K1/UV2/UV8-DH14.bam_PicardSort.bam SO=coordinate RGID=sample_dh14 RGLB=sample_dh14-Bgh RGPL=ILLUMINA RGSM=dh14 RGPU=Mi
