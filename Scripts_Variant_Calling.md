@@ -2,12 +2,13 @@ UV_mutagenesis_Bgh-K1
 
 #trimming the reads (Trimmomatic)
 
+```
 java -jar ~/trimmomatic-0.38.jar PE -threads 8 -trimlog ~/log-file ~/F.fastq.gz ~/R.fastq.gz ~/F_paired.fq ~/F_unpaired.fq ~/R_paired.fq ~/R_unpaired.fq ILLUMINACLIP:Trimmomatic-0.38/adapters/TruSeq3-PE.fa:5:30:10 SLIDINGWINDOW:3:18 LEADING:6 TRAILING:6 MINLEN:60
-
+```
 #map all K1, UV2 and UV8 reads to the DH14 genome (BWA)
-
+```
 ~/bwa-0.7.17/bwa mem -t 12 -M -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1' ~/Bgh_genome/bgh_dh14_v4.fa ~/F_paired.fq ~/B_paired.fq > ~/BWA-K1/UV2/UV8-DH14.sam
-
+```
 #sam to bam
 ```
 ~/samtools-1.9/samtools view -b -S ~/BWA-K1/UV2/UV8-DH14.sam > ~/BWA-K1/UV2/UV8-DH14.bam
