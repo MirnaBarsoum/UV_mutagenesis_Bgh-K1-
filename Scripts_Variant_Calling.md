@@ -87,11 +87,23 @@ java -jar ~/SnpSift.jar filter "( QUAL >= 20 && DP > 3 && MQ > 50 )" /mpileup_fi
 bgzip UV.vcf #to compress
 bcftools index K1.vcf.gz #creates the index file
 ```
-#Unique and common variants (bcftools) #I could also reduce the false ''unique'' positive by switching filtering and finding the unique variants steps, especially in freebayes and mpileup where the filtered variants are deleted from the vcf file; if i filter the variants before finding the unique variants, i will have more false positive (filtered in K1 and not in UV).
+#Unique and common variants (bcftools) #I could also reduce the false "unique" positive by switching filtering and finding the unique variants steps, especially in freebayes and mpileup where the filtered variants are deleted from the vcf file; if I filter the variants before finding the unique variants, I will have more false positives (filtered in K1 and not in UV).
 ```
 ~/bcftools isec -p ~/isec_common_Unique_K1UV2 ~/K1.vcf.gz ~/UV.vcf.gz
 ```
 #Predict the effect
 ```
 java -jar ~/snpEff.jar eff DH14 /work/mb297167/UV_BWA/BWA-UV2-DH14_PicardSort.dedup.vcf > /work/mb297167/UV_BWA/BWA-UV2-DH14_PicardSort.dedup.annotated.vcf
+```
+#Note: to use `snpEff.jar` to predict the effect, it is required to either download the database, or in this case, build one based on genome and annotation. 
+```
+cd ~/snpEff 
+mkdir ./data/DH14
+#copy the files
+cp ~/Bgh_genome/bgh_dh14_v4.gtf ./data/DH14/genes.gff
+cp ~/Bgh_genome/bgh_dh14_v4.fa ./data/DH14/sequences.fa
+#edit the file snpEff.config to insert database information:
+echo "DH14.genome : DH14" >> snpEff.config
+#to build the database
+java -jar snpEff.jar build -gff3 -v DH14
 ```
