@@ -105,5 +105,5 @@ cp ~/Bgh_genome/bgh_dh14_v4.fa ./data/DH14/sequences.fa
 #edit the file snpEff.config to insert database information:
 echo "DH14.genome : DH14" >> snpEff.config
 #to build the database
-java -jar snpEff.jar build -gff3 -v DH14
+java -jar snpEff.jar build -gtf22 -v DH14
 ```
