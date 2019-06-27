@@ -82,6 +82,11 @@ java -jar ~/SnpSift.jar filter "( QUAL >= 20 && DP > 3 && MQ > 50 )" /mpileup_fi
 ```
 ~/vcftools --vcf ~/BWA UV2_DH14_PicardSort.dedup_vcffiltered.freebayes.vcf --remove-indels --recode --recode-INFO-all --out ~/BWA UV2_DH14_PicardSort.dedup_vcffiltered.freebayes.snpsonly.vcf
 ```
+#For use of vcf files in `bcftools`, files should be compressed and indexed.
+```
+bgzip UV.vcf #to compress
+bcftools index K1.vcf.gz #creates the index file
+```
 #Unique and common variants (bcftools) #I could also reduce the false ''unique'' positive by switching filtering and finding the unique variants steps, especially in freebayes and mpileup where the filtered variants are deleted from the vcf file; if i filter the variants before finding the unique variants, i will have more false positive (filtered in K1 and not in UV).
 ```
 ~/bcftools isec -p ~/isec_common_Unique_K1UV2 ~/K1.vcf.gz ~/UV.vcf.gz
