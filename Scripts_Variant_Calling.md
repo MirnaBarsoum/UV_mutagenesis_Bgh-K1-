@@ -66,7 +66,7 @@ java -jar GenomeAnalysisTK.jar -T VariantFiltration -R ~/Bgh_genome/bgh_dh14_v4.
 ```
 ~/freebayes -f ~/Bgh_genome/bgh_dh14_v4.fa -p 1 ~/BWA-UV2-DH14_PicardSort.dedup.bam -u > ~/BWA UV2_DH14_PicardSort.dedup._raw_variant_freebayes.vcf
 ```
-#filter variants (Freebayes) with 'vcffilter' from 'vcflib'
+#filter variants (Freebayes) with `vcffilter` from `vcflib`
 ```
 ~/vcffilter -f "QUAL > 20 & QUAL / AO > 10 & SAF > 1 & SAR > 1 & RPR > 1 & RPL > 1" ~/BWA UV2_DH14_PicardSort.dedup._raw_variant_freebayes.vcf > ~/BWA UV2_DH14_PicardSort.dedup_vcffiltered.freebayes.vcf
 ```
@@ -74,7 +74,7 @@ java -jar GenomeAnalysisTK.jar -T VariantFiltration -R ~/Bgh_genome/bgh_dh14_v4.
 ```
 ~/samtools mpileup -g -f ~/Bgh_genome/bgh_dh14_v4.fa ~/BWA-UV2-DH14_PicardSort.dedup.bam > ~/mpileup_UV2_raw.bcf ~/bcftools call -c -v --output-type b --ploidy 1 ~/mpileup_UV2_raw.bcf > ~/mpileup_UV2_var.bcf ~/bcftools view ~/mpileup_UV2_var.bcf > ~/mpileup_final_UV2.vcf
 ```
-#filter variants (Mpileup) with 'SnpEff'
+#filter variants (Mpileup) with `SnpEff`
 ```
 java -jar ~/SnpSift.jar filter "( QUAL >= 20 && DP > 3 && MQ > 50 )" /mpileup_final_UV2.vcf > //mpileup_final_UV2.vcf_SNPsift.vcf
 ```
