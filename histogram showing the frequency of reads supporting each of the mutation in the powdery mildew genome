@@ -1,5 +1,6 @@
 #subset for single copy genes (the list of sigle copy genes (Frantzeskakis et al., 2018)in DH14 was used
-```
+
+````
 grep -Fwf /home/mb297167/One_copy_genes /home/mb297167/proteincoding_single_copy /work/mb297167/DH14/raw_variant_DH14_freebayes.annotated.singlecopy.vcf > /home/mb297167/proteincoding_single_copy /work/mb297167/DH14/raw_variant_DH14_freebayes.annotated.singlecopy_proteincoding.vcf
 grep -Fwf /home/mb297167/proteincoding_single_copy /work/mb297167/DH14/raw_variant_DH14_freebayes.annotated.singlecopy.vcf > /home/mb297167/proteincoding_single_copy /work/mb297167/DH14/raw_variant_DH14_freebayes.annotated.singlecopy_proteincoding.vcf
 ```
